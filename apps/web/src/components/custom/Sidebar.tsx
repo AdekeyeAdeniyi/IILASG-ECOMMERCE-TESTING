@@ -44,7 +44,7 @@ const Sidebar = () => {
     },
     {
       icon: <Messages2 {...iconStyle} />,
-      label: "Hello",
+      label: "Forums",
       to: "/forums",
     },
   ];
