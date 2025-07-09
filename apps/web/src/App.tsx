@@ -25,8 +25,8 @@ const App = () => {
       <Route path="/signin" element={<SignInPage />} />
       <Route path="/signup" element={<SignUpPage />} />
       <Route path="/reset-password" element={<ResetPasswordPage />} />
-      <Route path="/verify-email" element={ <VerifyEmailPage/> } />
-      <Route path="/new-password" element={ <ResetPasswordConfirmPage /> } />
+      <Route path="/verify-email" element={<VerifyEmailPage />} />
+      <Route path="/new-password" element={<ResetPasswordConfirmPage />} />
 
       {/* Routes using Main Layout */}
       <Route path="/" element={<MainLayout />}>
