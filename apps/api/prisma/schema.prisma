@@ -1,0 +1,80 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                      String                  @id @default(uuid())
+  email                   String                  @unique
+  first_name              String
+  last_name               String
+  password                String
+  role                    Role
+  state                   String?
+  isLagosian              Boolean                 @default(false)
+  createdAt               DateTime                @default(now())
+  updatedAt               DateTime                @updatedAt
+
+  refreshTokenSessions    RefreshTokenSession?   
+
+  products Product[]
+  catogeries Category[]
+}
+
+model RefreshTokenSession {
+  id             String   @id @default(uuid())
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String   @unique                   
+  refreshTokenId String   @unique                  
+  createdAt      DateTime @default(now())
+  expiresAt      DateTime
+  revoked        Boolean  @default(false)
+
+  @@index([userId])
+}
+
+enum Role {
+  ADMIN
+  VENDOR
+  BUYER
+}
+
+model Category {
+  id      Int    @id @default(autoincrement())
+  name    String
+
+  vendorId     String
+  vendor       User     @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  products Product[]
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  price       Decimal  @db.Decimal(10, 2)
+  quantity    Int      @default(0)
+  sales_count Int      @default(0)
+  is_featured Boolean  @default(false)
+  created_at  DateTime @default(now()) 
+
+  categoryId  Int
+  category    Category @relation(fields: [categoryId], references: [id])
+
+  vendorId     String
+  vendor       User     @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+  @@index([categoryId])
+}
+
