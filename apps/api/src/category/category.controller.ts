@@ -18,8 +18,11 @@ import {
 } from '@nestjs/swagger';
 import { CreateCategoryDto } from 'src/common/dto/create-category.dto';
 import { UpdateCategoryDto } from 'src/common/dto/update-category.dto';
+import { Roles } from 'src/common/decorators/roles.decorator';
+import { Role } from 'generated/prisma';
 
 @ApiBearerAuth()
+@Roles(Role.VENDOR)
 @ApiTags('Category')
 @Controller('category')
 export class CategoryController {

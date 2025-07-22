@@ -99,9 +99,9 @@ export class AuthController {
     },
   })
   async signinUser(@Request() req: { user: UserDetailsWithTimestamps }) {
-    const { id } = req.user;
+    const { id, role, email } = req.user;
 
-    const token = await this.authService.generateToken(id!);
+    const token = await this.authService.generateToken(id!, role!, email!);
 
     return {
       user: {
@@ -178,8 +178,9 @@ export class AuthController {
     description: 'Unauthorized or invalid refresh token',
   })
   async refreshToken(@Request() req: { user: UserDetailsWithTimestamps }) {
-    const { id } = req.user;
-    const token = await this.authService.generateToken(id!);
+    const { id, email, role } = req.user;
+
+    const token = await this.authService.generateToken(id!, email, role);
 
     return {
       token: token?.accessToken,

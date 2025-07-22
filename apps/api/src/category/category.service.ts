@@ -15,7 +15,7 @@ export class CategoryService {
     const existing = await this.prisma.category.findFirst({
       where: {
         name: createCategory.name.toLowerCase(),
-        vendorId: vendorId,
+        userId: vendorId,
       },
     });
 
@@ -26,14 +26,14 @@ export class CategoryService {
     return this.prisma.category.create({
       data: {
         name: createCategory.name.toLowerCase(),
-        vendorId: vendorId,
+        userId: vendorId,
       },
     });
   }
 
   async findAll(vendorId: string) {
     return this.prisma.category.findMany({
-      where: { vendorId },
+      where: { userId: vendorId },
       orderBy: { name: 'asc' },
     });
   }
@@ -44,7 +44,7 @@ export class CategoryService {
     vendorId: string,
   ) {
     const existing = await this.prisma.category.findFirst({
-      where: { id, vendorId },
+      where: { id, userId: vendorId },
     });
 
     if (!existing)
@@ -60,12 +60,20 @@ export class CategoryService {
 
   async delete(id: number, vendorId: string) {
     const existing = await this.prisma.category.findFirst({
-      where: { id, vendorId },
+      where: { id, userId: vendorId },
     });
 
     if (!existing)
       throw new NotFoundException('Category not found or access denied');
 
+    await this.prisma.product.updateMany({
+      where: { categoryId: id },
+      data: { categoryId: null },
+    });
+
+    await this.prisma.category.delete({
+      where: { id: id },
+    });
     await this.prisma.category.delete({ where: { id } });
 
     return { message: 'Category deleted successfully', categoryId: id };
